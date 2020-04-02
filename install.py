@@ -41,7 +41,7 @@ def install():
 
     print("Setup auto-rotator service")
     do(msg="copy rotate-helper file",
-        cmd='run_command("sudo cp ./rotate-helper /usr/bin/")')
+        cmd='run_command("sudo cp ./bin/rotate-helper /usr/bin/")')
     do(msg="add excutable mode for rotate-helper",
         cmd='run_command("sudo chmod +x /usr/bin/rotate-helper")')
     # do(msg="copy auto-rotator file",
