@@ -73,6 +73,7 @@ def rotate():
     elif len(sys.argv) == 2:
         if sys.argv[1] == "install":
             lxAutoStart.set("@auto-rotator")
+            # run_command("auto-rotator 2&>1 1>/dev/null &")
             print("auto-rotator installed successfully")
             quit()
         elif sys.argv[1] == "uninstall":

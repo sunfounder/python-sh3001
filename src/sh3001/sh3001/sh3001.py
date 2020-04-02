@@ -413,13 +413,13 @@ class Sh3001(I2C):
     def __init__(self):
         super().__init__()
         # self.6d_data_buf = bytearray([0,0,0,0,0,0])
-        db = '/home/pi/calibrate_config'
+        db = '/home/pi/.calibrate_config'
         self.reg_status = bytearray([0])
         self.sh3001_init()
         # self.acc_cal = [-288.0, 141.5, 31.5]
         self.db = fileDB(db=db)
         db_val = self.db.get('calibrate_offset_list', default_value=str(self.new_list(0)))
-        db_val = [float(i.strip()) for i in db_val.strip("()").split(",")]
+        db_val = [float(i.strip()) for i in db_val.strip("[]").split(",")]
         self.acc_offset = db_val
         
         # self.acc_offset = [-288.0, 141.5, -30]
@@ -619,49 +619,49 @@ class Sh3001(I2C):
         return accData,gyroData
 
     def sh3001_getimudata(self,aram,axis):
-        accdata,gyrodata = self._sh3001_getimudata()
+        accData,gyroData = self._sh3001_getimudata()
         accData = [(accData[i] - self.acc_offset[i]) for i in range(len(accData))]
         gyroData = [gyroData[i] - self.gyro_offset[i] for i in range(len(gyroData))]
         # print()
 
         if aram == 'acc':
             if axis == 'x':
-                return accdata[0]
+                return accData[0]
             elif axis == 'y':
-                return accdata[1]
+                return accData[1]
             elif axis == 'z':
-                return accdata[2]
+                return accData[2]
             elif axis == 'xy':
-                return [accdata[0],accdata[1]]
+                return [accData[0],accData[1]]
             elif axis == 'xz':
-                return [accdata[0],accdata[2]]
+                return [accData[0],accData[2]]
             elif axis == 'yz':
-                return [accdata[1],accdata[2]]
+                return [accData[1],accData[2]]
             elif axis == 'xyz':
-                return [accdata[0],accdata[1],accdata[2]]
+                return [accData[0],accData[1],accData[2]]
             # else:
             #     raise ValueError('axis must be x,y,z,xy,xz,xyz')
 
         elif aram == 'gyro':
             if axis == 'x':
-                return gyrodata[0]
+                return gyroData[0]
             elif axis == 'y':
-                return gyrodata[1]
+                return gyroData[1]
             elif axis =='z':
-                return gyrodata[2]
+                return gyroData[2]
             elif axis == 'xy':
-                return [gyrodata[0],gyrodata[1]]
+                return [gyroData[0],gyroData[1]]
             elif axis == 'xz':
-                return [gyrodata[0],gyrodata[2]]
+                return [gyroData[0],gyroData[2]]
             elif axis == 'yz':
-                return [gyrodata[1],gyrodata[2]]
+                return [gyroData[1],gyroData[2]]
             elif axis == 'xyz':
-                return [gyrodata[0],gyrodata[1],gyrodata[2]]
+                return [gyroData[0],gyroData[1],gyroData[2]]
             # else:
             #     raise ValueError('axis must be x,y,z,xy,xz,xyz')
 
         elif aram == 'all':
-            return accdata,gyrodata
+            return accData,gyroData
         
         else:
             raise ValueError('aram must be acc ,gyro or all')
@@ -692,7 +692,7 @@ class Sh3001(I2C):
     #     print("gyro_val:",self.gyro_offset)
 
     def set_offset(self,offset_list):
-        temp = str(offset_list)
+        temp = str(list(offset_list))
         self.db.set('calibrate_offset_list',temp)
         self.acc_offset = offset_list
 
@@ -725,7 +725,7 @@ if __name__ == '__main__':
     
 
     sensor = Sh3001()
-    sensor.zero_point_init()
+    # sensor.zero_point_init()
     # print('init')
     # print(sensor.sh3001_init())
     a = 0

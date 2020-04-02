@@ -55,7 +55,7 @@ def install():
     # do(msg="add excutable mode for auto-rotator-service",
     #     cmd='run_command("sudo chmod +x /usr/auto-rotator-service")')
 
-    os.chdir("./sh3001")
+    os.chdir("./src/sh3001")
     print("Install sh3001 python package")
     do(msg="run setup file",
         cmd='run_command("sudo python3 setup.py install")')
