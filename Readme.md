@@ -10,7 +10,7 @@ Quick Links:
  * [License](#license)
  * [Contact us](#contact_us)
 
-<a id="about_this_kit"></a>
+<a id="about_this_package"></a>
 ### About Sh3001:
 This is a package about sh3001, provided by SunFounder. If any error or BUGs, wellcom to post issus in Github, or [Email](#contact_us) us.
 
@@ -22,7 +22,7 @@ https://github.com/sunfounder-ezblock/ezb-pi/tree/master/doc
 
 <a id="update"></a>
 ### Update:
-2019-09-16:
+2020-04-03:
  - compatible for RaspberryPi 4B
     
 
