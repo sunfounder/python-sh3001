@@ -80,6 +80,7 @@ def rotate():
             quit()
         elif sys.argv[1] == "calibrate":
             # while True:
+            sensor = Sh3001()
             sensor.acc_calibrate_cmd()
             # lxAutoStart.remove("@auto-rotator")
             print("auto-rotator calibrate successfully")
