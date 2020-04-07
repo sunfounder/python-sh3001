@@ -29,5 +29,5 @@ esac
 xrandr --output HDMI-1 --rotate $display
 # xinput --set-prop 'wch.cn USB2IIC_CTP_CONTROL' 'Coordinate Transformation Matrix' $touch
 # get name from `xinput -list`
-# xinput --set-prop 'HID 222a:0001' 'Coordinate Transformation Matrix' $touch
-xinput --set-prop 'ILITEK ILITEK-TP' 'Coordinate Transformation Matrix' $touch
+xinput --set-prop 'HID 222a:0001' 'Coordinate Transformation Matrix' $touch
+# xinput --set-prop 'ILITEK ILITEK-TP' 'Coordinate Transformation Matrix' $touch
