@@ -65,9 +65,7 @@ def rotate():
     import math
     import sys
 
-    sensor = Sh3001()
     lxAutoStart = LxAutoStart()
-
     if len(sys.argv) > 2:
         usage()
     elif len(sys.argv) == 2:
@@ -89,6 +87,8 @@ def rotate():
         else:
             usage()
     
+    sensor = Sh3001()
+
 
     while True:
         # print("1")
