@@ -24,3 +24,10 @@ pi@raspberrypi:~ $ sudo auto-rotator calibrate         ##calibrate the Gsensor
                    quit use ctrl c
 ```
 - 拿起raspad到合适位置然后点击键盘的s键，向三个轴的不同方向慢慢翻转radpad，并且观察最大最小值，一般单个值不应该超过+-2400，待每个值都基本不变时，保持radpad不动，然后按下ctrl + c，至此校准结束
+
+## recognize input device
+- 运行下面的命令
+```shell
+pi@raspberrypi:~ $ xinput -list         ##calibrate the Gsensor
+```
+- 找到对应的dev的名称，并且在sh3001/bin/rotate-helper文件里修改最底下的dev名称
