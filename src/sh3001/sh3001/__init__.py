@@ -64,15 +64,20 @@ def rotate():
     from math import asin
     import math
     import sys
+    from sh3001.filedb import fileDB
 
     lxAutoStart = LxAutoStart()
-    if len(sys.argv) > 2:
-        usage()
-    elif len(sys.argv) == 2:
+    db = fileDB(db='/home/pi/.calibrate_config')
+    if len(sys.argv) >= 2:
         if sys.argv[1] == "install":
             lxAutoStart.set("@auto-rotator")
             # run_command("auto-rotator 2&>1 1>/dev/null &")
             print("auto-rotator installed successfully")
+            if len(sys.argv) == 3:
+                if sys.argv[2] in ["180", "90"]:
+                    db.set("rotate_angle", sys.argv[2])
+                else:
+                    usage()
             quit()
         elif sys.argv[1] == "uninstall":
             lxAutoStart.remove("@auto-rotator")
@@ -89,7 +94,7 @@ def rotate():
             usage()
     
     sensor = Sh3001()
-
+    rotate_angle = db.get("rotate_angle", "90")
 
     while True:
         # print("1")
@@ -104,20 +109,22 @@ def rotate():
         time.sleep(0.1)
         print("current_angle_x: ",current_angle_x)
         print("current_angle_y: ",current_angle_y)
-        if current_angle_x > 45:
-            print("left")
-            run_command("rotate-helper left")
-
-        elif current_angle_x < -45:
-            print("right")
-            run_command("rotate-helper right")
-
         if current_angle_y > 45:
             print("normal")
             run_command("rotate-helper normal")
         elif current_angle_y < -45:
             print("inverted")
             run_command("rotate-helper inverted")
+        elif rotate_angle == "90":
+            if current_angle_x > 45:
+                print("left")
+                run_command("rotate-helper left")
+
+            elif current_angle_x < -45:
+                print("right")
+                run_command("rotate-helper right")
+            else:
+                print("no")
         else:
             print("no")
         time.sleep(1)
