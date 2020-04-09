@@ -67,7 +67,7 @@ def rotate():
     from sh3001.filedb import fileDB
 
     lxAutoStart = LxAutoStart()
-    db = fileDB(db='/home/pi/.calibrate_config')
+    db = fileDB(db='/home/pi/.config/auto-rotater/config')
     if len(sys.argv) >= 2:
         if sys.argv[1] == "install":
             lxAutoStart.set("@auto-rotator")

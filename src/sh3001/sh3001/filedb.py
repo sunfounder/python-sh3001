@@ -24,6 +24,9 @@ class fileDB(object):
 		else:
 			self.db = "config"
 
+		# if len(os.listdir(self.db)) == 0:
+		# 	os.system("touch %s"self.db)
+
 	def get(self, name, default_value=None):
 		"""Get value by data's name. Default value is for the arguemants do not exist"""
 		try:
