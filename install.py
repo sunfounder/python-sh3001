@@ -44,6 +44,8 @@ def install():
         cmd='run_command("sudo cp ./bin/rotate-helper /usr/bin/")')
     do(msg="add excutable mode for rotate-helper",
         cmd='run_command("sudo chmod +x /usr/bin/rotate-helper")')
+    do(msg="create config",
+        cmd='run_command("sudo mkdir /home/pi/.config/auto-rotator/ && touch /home/pi/.config/auto-rotator/config")')
     # do(msg="copy auto-rotator file",
     #     cmd='run_command("sudo cp ./auto-rotator /etc/init.d/auto-rotator")')
     # do(msg="add excutable mode for auto-rotator",
