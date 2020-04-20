@@ -98,7 +98,12 @@ def rotate():
 
     while True:
         # print("1")
-        acc_list = sensor.sh3001_getimudata('acc','xyz')
+        try:
+            acc_list = sensor.sh3001_getimudata('acc','xyz')
+        except IOError:
+            print("read module error.")
+            time.sleep(1)
+            continue
         # print(acc_list)
         acc_list = [min(2046,i) for i in acc_list]
         acc_list = [max(-2046,i) for i in acc_list]
