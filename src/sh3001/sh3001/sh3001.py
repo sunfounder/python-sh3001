@@ -741,10 +741,10 @@ if __name__ == '__main__':
         # current_val = [i / 16.4 * ODR_T if abs(i / 16.4 * ODR_T) > 1 else 0 for i in sensor.sh3001_getimudata('gyro','xyz')]
         # last_val = [last_val[i] + current_val[i] for i in range(3)]
 
-        current_val = [i / 16.4 * 0.1 for i in sensor.sh3001_getimudata('gyro','xyz')]
-        last_val = [last_val[i] + current_val[i] for i in range(3)]
+        current_val = [i / 16.4 * 0.1 for i in sensor.sh3001_getimudata('acc','xyz')]
+        # last_val = [last_val[i] + current_val[i] for i in range(3)]
         
-        print(last_val)
+        print(current_val)
         time.sleep(ODR_T)
 
 

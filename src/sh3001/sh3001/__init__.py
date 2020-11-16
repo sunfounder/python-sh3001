@@ -13,6 +13,17 @@ def run_command(cmd=""):
     # print(status)
     return status, result
 
+def do(msg="", cmd=""):
+    print(" - %s..." % (msg), end='\r')
+    print(" - %s... " % (msg), end='')
+    status, result = eval(cmd)
+    # print(status, result)
+    if status == 0 or status == None or result == "":
+        print('Done')
+    else:
+        print('Error')
+        errors.append("%s error:\n  Status:%s\n  Error:%s" %
+                      (msg, status, result))
 
 class LxAutoStart(object):
     ''' 
@@ -20,11 +31,21 @@ class LxAutoStart(object):
     '''
 
     def __init__(self, file="/home/pi/.config/lxsession/LXDE-pi/autostart"):
-        self.file = file
-        with open(self.file, 'r') as f:
-            cmdline = f.read()
-        self.cmdline = cmdline.strip()
-        self.cmds = self.cmdline.split('\n')
+        try:
+            self.file = file
+            with open(self.file, 'r') as f:
+                cmdline = f.read()
+            self.cmdline = cmdline.strip()
+            self.cmds = self.cmdline.split('\n')
+        except FileNotFoundError:
+            self.file = file
+            conf = open(self.file,'w')
+            conf.write("")
+            conf.close()
+			# return default_value
+		# except:
+		# 	return default_value
+
 
     def remove(self, expected):
         for cmd in self.cmds:
@@ -70,9 +91,17 @@ def rotate():
     db = fileDB(db='/home/pi/.config/auto-rotator/config')
     if len(sys.argv) >= 2:
         if sys.argv[1] == "install":
-            lxAutoStart.set("@auto-rotator")
-            # run_command("auto-rotator 2&>1 1>/dev/null &")
+            _, result = run_command("ls /home/pi/.config")
+            if "lxterminal" not in result:
+                lxAutoStart.set("@lxpanel --profile LXDE-pi")
+                lxAutoStart.set("@pcmanfm --desktop --profile LXDE-pi")
+                lxAutoStart.set("@xscreensaver -no-splash")
+                lxAutoStart.set("@auto-rotator")
+
+            else:
+                lxAutoStart.set("@auto-rotator")
             print("auto-rotator installed successfully")
+
             if len(sys.argv) == 3:
                 if sys.argv[2] in ["180", "90"]:
                     db.set("rotate_angle", sys.argv[2])
@@ -97,7 +126,6 @@ def rotate():
     rotate_angle = db.get("rotate_angle", "90")
 
     while True:
-        # print("1")
         try:
             acc_list = sensor.sh3001_getimudata('acc','xyz')
         except IOError:
@@ -112,29 +140,31 @@ def rotate():
         current_angle_y = (asin(acc_list[1] / 2046.0)) / math.pi * 180
         # print((asin(acc_list[1] / 2046.0)) / math.pi * 180)
         time.sleep(0.1)
-        print("current_angle_x: ",current_angle_x)
-        print("current_angle_y: ",current_angle_y)
+        # print("current_angle_x: ",current_angle_x)
+        # print("current_angle_y: ",current_angle_y)
         if current_angle_y > 45:
-            print("normal")
+            # print("normal")
             run_command("rotate-helper normal")
         elif current_angle_y < -45:
-            print("inverted")
+            # print("inverted")
             run_command("rotate-helper inverted")
         elif rotate_angle == "90":
             if current_angle_x > 45:
-                print("left")
+                # print("left")
                 run_command("rotate-helper left")
 
             elif current_angle_x < -45:
-                print("right")
+                # print("right")
                 run_command("rotate-helper right")
             else:
-                print("no")
+                pass
+                # print("no")
         else:
-            print("no")
+            pass
+            # print("no")
         time.sleep(1)
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 #     # run_command("rotate-helper normal")
-#     while True:
-#         rotate()
+    while True:
+        rotate()

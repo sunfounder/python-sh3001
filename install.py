@@ -44,8 +44,21 @@ def install():
         cmd='run_command("sudo cp ./bin/rotate-helper /usr/bin/")')
     do(msg="add excutable mode for rotate-helper",
         cmd='run_command("sudo chmod +x /usr/bin/rotate-helper")')
+    do(msg="delete config",
+        cmd='run_command("sudo rm -rf /home/pi/.config/auto-rotator")')
     do(msg="create config",
         cmd='run_command("sudo mkdir /home/pi/.config/auto-rotator/ && touch /home/pi/.config/auto-rotator/config")')
+
+    _, result = run_command("ls /home/pi/.config")
+    if "lxsession" not in result:
+        print("not..................")
+        do(msg="create autostart",
+            cmd='run_command("sudo mkdir /home/pi/.config/lxsession/ && mkdir /home/pi/.config/lxsession/LXDE-pi/ && touch /home/pi/.config/lxsession/LXDE-pi/autostart")')
+
+    # do(msg="create config",
+        # cmd='run_command("sudo mkdir /home/pi/.config/lxsession/ && mkdir /home/pi/.config/lxsession/LXDE-pi/ && touch /home/pi/.config/lxsession/LXDE-pi/autostart")')
+    # do(msg="create config",
+    #     cmd='run_command("sudo mkdir /home/pi/.config/lxsession/ && mkdir /home/pi/.config/lxsession/LXDE-pi/")')
     # do(msg="copy auto-rotator file",
     #     cmd='run_command("sudo cp ./auto-rotator /etc/init.d/auto-rotator")')
     # do(msg="add excutable mode for auto-rotator",
