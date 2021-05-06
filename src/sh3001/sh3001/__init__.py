@@ -92,7 +92,7 @@ def rotate():
     if len(sys.argv) >= 2:
         if sys.argv[1] == "install":
             _, result = run_command("ls /home/pi/.config")
-            if "lxterminal" not in result:
+            if "raspad" not in result:
                 lxAutoStart.set("@lxpanel --profile LXDE-pi")
                 lxAutoStart.set("@pcmanfm --desktop --profile LXDE-pi")
                 lxAutoStart.set("@xscreensaver -no-splash")
