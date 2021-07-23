@@ -410,17 +410,17 @@ class Sh3001(I2C):
     SH3001_POWERDOWN_MODE	= 0x02
 
 
-    def __init__(self):
+    def __init__(self, db="sh3001.config"):
         super().__init__()
         # self.6d_data_buf = bytearray([0,0,0,0,0,0])
-        db = '/home/pi/.calibrate_config'
+        # db = '/home/pi/.calibrate_config'
         self.reg_status = bytearray([0])
         self.sh3001_init()
         # self.acc_cal = [-288.0, 141.5, 31.5]
         self.db = fileDB(db=db)
-        db_val = self.db.get('calibrate_offset_list', default_value=str(self.new_list(0)))
-        db_val = [float(i.strip()) for i in db_val.strip("[]").split(",")]
-        self.acc_offset = db_val
+        self.acc_offset = self.get_from_config('calibrate_offset_list', default_value=str(self.new_list(0)))
+        self.acc_max = self.get_from_config('calibrate_max_list', default_value=str(self.new_list(0)))
+        self.acc_min = self.get_from_config('calibrate_min_list', default_value=str(self.new_list(0)))
         
         # self.acc_offset = [-288.0, 141.5, -30]
         # self.acc_scale = [1,1,1]
@@ -429,6 +429,11 @@ class Sh3001(I2C):
         self.data_vector = [0,0,0]
         # self.cal = [0,0,0]
         # pass
+
+    def get_from_config(self, name, default):
+        value = self.db.get('calibrate_offset_list', default_value=str(self.new_list(0)))
+        value = [float(i.strip()) for i in value.strip("[]").split(",")]
+        return value
 
     def new_list(self, default_value):
         _ = [0 for i in range(3)]
@@ -440,8 +445,8 @@ class Sh3001(I2C):
         '''
         # self.update()
         # if aram isinstance()
-        maxvec = self.data_vector[:]                # Initialise max and min lists with current values
-        minvec = self.data_vector[:]
+        # maxvec = self.data_vector[:]                # Initialise max and min lists with current values
+        # minvec = self.data_vector[:]
         count = 0
         # print(stop_func)
         if aram == 'acc':
@@ -454,10 +459,10 @@ class Sh3001(I2C):
                 self.data_vector = self._sh3001_getimudata()[0]
                 # minvec = sensor.sh3001_getimudata(aram,'xyz')
 
-                maxvec = list(map(max, maxvec, self.data_vector))
-                minvec = list(map(min, minvec, self.data_vector))
-                print('max_list: ',maxvec,'min_list: ',minvec)
-                exec("self." + aram + "_offset = tuple(map(lambda a, b: (a + b)/2, maxvec, minvec))")
+                self.acc_max = list(map(max, self.acc_max, self.data_vector))
+                self.acc_min = list(map(min, self.acc_min, self.data_vector))
+                print('max_list: ',self.acc_max,'min_list: ',self.acc_min)
+                exec("self." + aram + "_offset = tuple(map(lambda a, b: (a + b)/2, self.acc_max, self.acc_min))")
             # count +=1
         elif aram == 'gyro':
             sum_list = [0,0,0]
@@ -666,8 +671,6 @@ class Sh3001(I2C):
         else:
             raise ValueError('aram must be acc ,gyro or all')
 
-
-
     def sh3001_gettempdata(self):
         regdata =[0,0]
         tempref = [0,0]
@@ -694,6 +697,8 @@ class Sh3001(I2C):
     def set_offset(self,offset_list):
         temp = str(list(offset_list))
         self.db.set('calibrate_offset_list',temp)
+        self.db.set('calibrate_max_list',self.acc_max)
+        self.db.set('calibrate_min_list',self.acc_min)
         self.acc_offset = offset_list
 
     def acc_calibrate_cmd(self):

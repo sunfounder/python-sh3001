@@ -119,7 +119,7 @@ def rotate():
         else:
             usage()
     
-    sensor = Sh3001()
+    sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
     rotate_angle = db.get("rotate_angle", "90")
 
     while True:

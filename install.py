@@ -48,36 +48,33 @@ def install():
         cmd='run_command("sudo rm -rf /home/pi/.config/auto-rotator")')
     do(msg="create config",
         cmd='run_command("sudo mkdir /home/pi/.config/auto-rotator/ && touch /home/pi/.config/auto-rotator/config")')
+    do(msg="change owner",
+        cmd='run_command("sudo chown -R pi:pi /home/pi/.config/auto-rotator/")')
+    do(msg="change mode",
+        cmd='run_command("sudo chmod -R 700 /home/pi/.config/auto-rotator/")')
 
-    _, result = run_command("ls /home/pi/.config")
-    if "lxsession" not in result:
-        print("not..................")
-        do(msg="create autostart",
-            cmd='run_command("sudo mkdir /home/pi/.config/lxsession/ && mkdir /home/pi/.config/lxsession/LXDE-pi/ && touch /home/pi/.config/lxsession/LXDE-pi/autostart")')
-
-    # do(msg="create config",
-        # cmd='run_command("sudo mkdir /home/pi/.config/lxsession/ && mkdir /home/pi/.config/lxsession/LXDE-pi/ && touch /home/pi/.config/lxsession/LXDE-pi/autostart")')
-    # do(msg="create config",
-    #     cmd='run_command("sudo mkdir /home/pi/.config/lxsession/ && mkdir /home/pi/.config/lxsession/LXDE-pi/")')
-    # do(msg="copy auto-rotator file",
-    #     cmd='run_command("sudo cp ./auto-rotator /etc/init.d/auto-rotator")')
-    # do(msg="add excutable mode for auto-rotator",
-    #     cmd='run_command("sudo chmod +x /etc/init.d/auto-rotator")')
-    # do(msg="update service settings for auto-rotator",
-    #     cmd='run_command("sudo update-rc.d auto-rotator defaults")')
-    # do(msg="copy auto-rotator-service file",
-    #     cmd='run_command("sudo cp ./auto-rotator-service /usr/bin")')
-    # do(msg="add excutable mode for auto-rotator-service",
-    #     cmd='run_command("sudo chmod +x /usr/auto-rotator-service")')
+    # _, result = run_command("ls /home/pi/.config")
+    # if "lxsession" not in result:
+    #     print("not..................")
+    #     do(msg="create autostart",
+    #         cmd='run_command("sudo mkdir /home/pi/.config/lxsession/ && mkdir /home/pi/.config/lxsession/LXDE-pi/ && touch /home/pi/.config/lxsession/LXDE-pi/autostart")')
+    if not os.path.isdir("/home/pi/.config/lxsession"):
+        do(msg="mkdir lxsession", cmd='run_command("mkdir /home/pi/.config/lxsession/")')
+    if not os.path.isdir("/home/pi/.config/lxsession/LXDE-pi"):
+        do(msg="mkdir LXDE-pi", cmd='run_command("mkdir /home/pi/.config/lxsession/LXDE-pi")')
+    if not os.path.isfile("/home/pi/.config/lxsession/LXDE-pi/autostart"):
+        do(msg="copy autostart",
+            cmd='run_command("sudo cp /etc/xdg/lxsession/LXDE-pi/autostart /home/pi/.config/lxsession/LXDE-pi/autostart")')
+        do(msg="change owner",
+            cmd='run_command("sudo chown -R pi:pi /home/pi/.config/lxsession/")')
+        do(msg="change mode",
+            cmd='run_command("sudo chmod -R 700 /home/pi/.config/lxsession/")')
 
     os.chdir("./src/sh3001")
     print("Install sh3001 python package")
     do(msg="run setup file",
         cmd='run_command("sudo python3 setup.py install")')
-    do(msg="cleanup",
-        cmd='run_command("sudo rm -rf sh3001.egg-info")')
     os.chdir("../")
-
 
     if len(errors) == 0:
         print("Finished")
@@ -90,7 +87,7 @@ def install():
 
 def cleanup():
     do(msg="cleanup",
-        cmd='run_command("sudo rm -rf usr ezblock.egg-info")')
+        cmd='run_command("sudo rm -rf sh3001.egg-info")')
 
 class Modules(object):
     ''' 
