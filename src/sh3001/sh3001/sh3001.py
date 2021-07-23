@@ -418,9 +418,9 @@ class Sh3001(I2C):
         self.sh3001_init()
         # self.acc_cal = [-288.0, 141.5, 31.5]
         self.db = fileDB(db=db)
-        self.acc_offset = self.get_from_config('calibrate_offset_list', default_value=str(self.new_list(0)))
-        self.acc_max = self.get_from_config('calibrate_max_list', default_value=str(self.new_list(0)))
-        self.acc_min = self.get_from_config('calibrate_min_list', default_value=str(self.new_list(0)))
+        self.acc_offset = self.get_from_config('calibrate_offset_list', default=str(self.new_list(0)))
+        self.acc_max = self.get_from_config('calibrate_max_list', default=str(self.new_list(0)))
+        self.acc_min = self.get_from_config('calibrate_min_list', default=str(self.new_list(0)))
         
         # self.acc_offset = [-288.0, 141.5, -30]
         # self.acc_scale = [1,1,1]
