@@ -27,7 +27,7 @@ class fileDB(object):
         # if len(os.listdir(self.db)) == 0:
         # 	os.system("touch %s"self.db)
 
-    def get(self, name, default_value=None):
+    def get(self, name, default=None):
         """Get value by data's name. Default value is for the arguemants do not exist"""
         try:
             conf = open(self.db,'r')
@@ -44,14 +44,14 @@ class fileDB(object):
             if flag:
                 return value
             else:
-                return default_value
+                return default
         except FileNotFoundError:
             conf = open(self.db,'w')
             conf.write("")
             conf.close()
-            return default_value
+            return default
         except:
-            return default_value
+            return default
     
     def set(self, name, value):
         """Set value by data's name. Or create one if the arguement does not exist"""

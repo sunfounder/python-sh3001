@@ -124,6 +124,7 @@ def rotate():
                 sensor.set_offset()
                 print("Calibrate successfully")
                 print('Offset: %s' % sensor.acc_offset)
+                quit()
         else:
             usage()
 

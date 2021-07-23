@@ -422,6 +422,7 @@ class Sh3001(I2C):
         self.acc_max = self.get_from_config('calibrate_max_list', default=str(self.new_list(0)))
         self.acc_min = self.get_from_config('calibrate_min_list', default=str(self.new_list(0)))
         
+        print(self.acc_max)
         # self.acc_offset = [-288.0, 141.5, -30]
         # self.acc_scale = [1,1,1]
         # self.gyro_offset = [-40,-235,-15]
@@ -431,11 +432,11 @@ class Sh3001(I2C):
         # pass
 
     def get_from_config(self, name, default=""):
-        value = self.db.get('calibrate_offset_list', default_value=str(self.new_list(0)))
+        value = self.db.get(name, default=str(self.new_list(0)))
         value = [float(i.strip()) for i in value.strip("[]").split(",")]
-        return value
+        return list(value)
 
-    def new_list(self, default_value):
+    def new_list(self, default):
         _ = [0 for i in range(3)]
         return _
 
@@ -461,8 +462,8 @@ class Sh3001(I2C):
 
                 self.acc_max = list(map(max, self.acc_max, self.data_vector))
                 self.acc_min = list(map(min, self.acc_min, self.data_vector))
-                print('\rmax_list: %s   min_list: %s' % (self.acc_max,self.acc_min), end="", flush=True)
-                exec("self." + aram + "_offset = tuple(map(lambda a, b: (a + b)/2, self.acc_max, self.acc_min))")
+                self.acc_offset = list(map(lambda a, b: (a + b)/2, self.acc_max, self.acc_min))
+                print('\033[K\rmax_list: %s   min_list: %s' % (self.acc_max, self.acc_min), end="", flush=True)
             # count +=1
         elif aram == 'gyro':
             sum_list = [0,0,0]
@@ -692,9 +693,9 @@ class Sh3001(I2C):
         if offset_list == None:
             offset_list = self.acc_offset
         # temp = str(list(offset_list))
-        self.db.set('calibrate_offset_list', offset_list)
-        self.db.set('calibrate_max_list', self.acc_max)
-        self.db.set('calibrate_min_list', self.acc_min)
+        self.db.set('calibrate_offset_list', str(offset_list))
+        self.db.set('calibrate_max_list', str(self.acc_max))
+        self.db.set('calibrate_min_list', str(self.acc_min))
 
     def acc_calibrate_cmd(self):
         try:
