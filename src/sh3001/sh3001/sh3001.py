@@ -461,7 +461,7 @@ class Sh3001(I2C):
 
                 self.acc_max = list(map(max, self.acc_max, self.data_vector))
                 self.acc_min = list(map(min, self.acc_min, self.data_vector))
-                print('max_list: ',self.acc_max,'min_list: ',self.acc_min)
+                print('\rmax_list: %s   min_list: %s' % (self.acc_max,self.acc_min), end="", flush=True)
                 exec("self." + aram + "_offset = tuple(map(lambda a, b: (a + b)/2, self.acc_max, self.acc_min))")
             # count +=1
         elif aram == 'gyro':
@@ -527,9 +527,7 @@ class Sh3001(I2C):
 
         return True
 
-        
     def sh3001_module_reset(self):
-
         #soft reset
         regData = 0x73
         self.sh3001_write(self.SH3001_ADDRESS,regData)
@@ -552,7 +550,6 @@ class Sh3001(I2C):
         self.sh3001_write(self.SH3001_ADDRESS,regData)
         time.sleep(0.01)
 
-
     def sh3001_acc_config(self,accODR,accRange,accCutOffFreq, accFilterEnble):
         # print('acc_config')
         # enable acc digital filter
@@ -574,9 +571,7 @@ class Sh3001(I2C):
         regData[0] |= (accCutOffFreq | accFilterEnble)
         self.sh3001_write(self.SH3001_ACC_CONF3,regData)
 
-
     def sh3001_gyro_config(self,gyroODR,gyroRangeX,gyroRangeY,gyroRangeZ,gyroCutOffFreq,gyroFilterEnble):
-
         regData = self.sh3001_read(self.SH3001_GYRO_CONF0, self.reg_status)
         regData[0] |= 0x01
         self.sh3001_write(self.SH3001_GYRO_CONF0,regData)
@@ -596,7 +591,6 @@ class Sh3001(I2C):
         self.sh3001_write(self.SH3001_GYRO_CONF2,regData)
 
     def sh3001_temp_config(self,tempODR,tempEnable):
-
         regData = self.sh3001_read(self.SH3001_TEMP_CONF0, self.reg_status)
         regData[0] &= 0x4F
         regData[0] |= (tempODR | tempEnable)
@@ -694,27 +688,27 @@ class Sh3001(I2C):
     #     self.gyro_offset = [round(sum_list[i],2) / 500.0 for i in range(3)]
     #     print("gyro_val:",self.gyro_offset)
 
-    def set_offset(self,offset_list):
-        temp = str(list(offset_list))
-        self.db.set('calibrate_offset_list',temp)
-        self.db.set('calibrate_max_list',self.acc_max)
-        self.db.set('calibrate_min_list',self.acc_min)
-        self.acc_offset = offset_list
+    def set_offset(self, offset_list=None):
+        if offset_list = None:
+            offset_list = self.acc_offset
+        # temp = str(list(offset_list))
+        self.db.set('calibrate_offset_list', offset_list)
+        self.db.set('calibrate_max_list', self.acc_max)
+        self.db.set('calibrate_min_list', self.acc_min)
 
     def acc_calibrate_cmd(self):
-
         try:
-            # sensor = Sh3001()
-            print('press the s to start calibrate,\nquit use ctrl c')
-            input_val = readkey()
-            print(input_val)
-            if input_val == 's':
-                print("start_calibrating")
-                while True:
-                    print('cal')
-                    self.calibrate('acc')
-                    # break
-        finally:
+            print('Calibration start!\nRotate the device for 720 degree in all 3 axis\nPress [Ctrl] + [C] if finish')
+            # input_val = readkey()
+            # print(input_val)
+            # if input_val == 's':
+            # print("start_calibrating")
+            while True:
+                # print('cal')
+                self.calibrate('acc')
+                # break
+        except KeyboardInterrupt:
+            print("")
             self.set_offset(self.acc_offset)
             print('offset: ',self.acc_offset)
 

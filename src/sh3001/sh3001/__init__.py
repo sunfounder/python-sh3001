@@ -73,7 +73,7 @@ class LxAutoStart(object):
 
 
 def usage():
-    print("Usage auto-rotator [install/uninstall]")
+    print("Usage auto-rotator [install/uninstall/calibrate]")
     quit()
 
 
@@ -85,6 +85,7 @@ def rotate():
     from sh3001.filedb import fileDB
 
     lxAutoStart = LxAutoStart()
+    sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
     db = fileDB(db='/home/pi/.config/auto-rotator/config')
     if len(sys.argv) >= 2:
         if sys.argv[1] == "install":
@@ -110,16 +111,22 @@ def rotate():
             print("auto-rotator uninstalled successfully")
             quit()
         elif sys.argv[1] == "calibrate":
-            # while True:
-            sensor = Sh3001()
-            sensor.acc_calibrate_cmd()
-            # lxAutoStart.remove("@auto-rotator")
-            print("auto-rotator calibrate successfully")
-            quit()
+            try:
+                print('Calibration start!')
+                print('Rotate the device for 720 degree in all 3 axi')
+                print('Press [Ctrl] + [C] if finish')
+                while True:
+                    # print('cal')
+                    sensor.calibrate('acc')
+                    # break
+            except KeyboardInterrupt:
+                print("")
+                sensor.set_offset()
+                print("Calibrate successfully")
+                print('Offset: %s' % sensor.acc_offset)
         else:
             usage()
-    
-    sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
+
     rotate_angle = db.get("rotate_angle", "90")
 
     while True:
