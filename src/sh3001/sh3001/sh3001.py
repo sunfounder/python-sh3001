@@ -430,7 +430,7 @@ class Sh3001(I2C):
         # self.cal = [0,0,0]
         # pass
 
-    def get_from_config(self, name, default):
+    def get_from_config(self, name, default=""):
         value = self.db.get('calibrate_offset_list', default_value=str(self.new_list(0)))
         value = [float(i.strip()) for i in value.strip("[]").split(",")]
         return value
