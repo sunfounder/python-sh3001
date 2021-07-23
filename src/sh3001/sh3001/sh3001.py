@@ -412,24 +412,15 @@ class Sh3001(I2C):
 
     def __init__(self, db="sh3001.config"):
         super().__init__()
-        # self.6d_data_buf = bytearray([0,0,0,0,0,0])
-        # db = '/home/pi/.calibrate_config'
         self.reg_status = bytearray([0])
         self.sh3001_init()
-        # self.acc_cal = [-288.0, 141.5, 31.5]
         self.db = fileDB(db=db)
         self.acc_offset = self.get_from_config('calibrate_offset_list', default=str(self.new_list(0)))
         self.acc_max = self.get_from_config('calibrate_max_list', default=str(self.new_list(0)))
         self.acc_min = self.get_from_config('calibrate_min_list', default=str(self.new_list(0)))
         
-        print(self.acc_max)
-        # self.acc_offset = [-288.0, 141.5, -30]
-        # self.acc_scale = [1,1,1]
-        # self.gyro_offset = [-40,-235,-15]
         self.gyro_offset = [0,0,0]
-        self.data_vector = [0,0,0]
-        # self.cal = [0,0,0]
-        # pass
+        self.data_vector = [0,0,0
 
     def get_from_config(self, name, default=""):
         value = self.db.get(name, default=str(self.new_list(0)))
@@ -444,61 +435,27 @@ class Sh3001(I2C):
         '''
         calibration routine, sets cal
         '''
-        # self.update()
-        # if aram isinstance()
-        # maxvec = self.data_vector[:]                # Initialise max and min lists with current values
-        # minvec = self.data_vector[:]
         count = 0
-        # print(stop_func)
         if aram == 'acc':
             while True:
-                # pass
-            # print('quit_cal')
-                # if count >=500:
-                #     break
                 waitfunc()
                 self.data_vector = self._sh3001_getimudata()[0]
-                # minvec = sensor.sh3001_getimudata(aram,'xyz')
 
                 self.acc_max = list(map(max, self.acc_max, self.data_vector))
                 self.acc_min = list(map(min, self.acc_min, self.data_vector))
                 self.acc_offset = list(map(lambda a, b: (a + b)/2, self.acc_max, self.acc_min))
                 print('\033[K\rmax_list: %s   min_list: %s' % (self.acc_max, self.acc_min), end="", flush=True)
-            # count +=1
         elif aram == 'gyro':
             sum_list = [0,0,0]
             count = 0
             for i in range(503):
                 if i > 2:
                     sum_list = [sum_list[i] + sensor.sh3001_getimudata('gyro','xyz')[i] for i in range(3)]
-                    # print(count)
-                    # count +=1
-            # print("sum_list:",sum_list)
             self.gyro_offset = [round(sum_list[i],2) / 500.0 for i in range(3)]
             print("gyro_offset:",self.gyro_offset)
         
         else:
             raise ValueError('aram must be acc or gyro')
-        # exec("self." + aram + "_scale = tuple(map(lambda a, b: (a - b)/ 4096.0, maxvec, minvec))")
-        # exec("self." + aram + "_offset = tuple(map(lambda a, b: (a + b)/2, maxvec, minvec))")
-        # print(self.acc_offset)
-        # return self.acc_offset
-        # print(self.acc_scale)
-
-
-        # sum_list = [0,0,0]
-        # count = 0
-        # for i in range(503):
-        #     if i > 2:
-        #         sum_list = [sum_list[i] + sensor.sh3001_getimudata('acc','xyz')[i] for i in range(3)]
-        #         # print(count)
-        #         # count +=1
-        # print("sum_list:",sum_list)
-        # self.acc_cal = [round(sum_list[i] / 500.0, 2) for i in range(3)]
-        # # print("gyro_val:",self.gyro_offset)
-        # self.acc_cal[0]
-        # print("acc_cal:",self.acc_cal)
-
 
     def sh3001_write(self,reg_addr,data):
         # data = bytearray(data)
@@ -677,22 +634,9 @@ class Sh3001(I2C):
 
         return (tempref[1] - tempref[0])/16.0 + 25.0
 
-    # def zero_point_init(self):
-    #     sum_list = [0,0,0]
-    #     count = 0
-    #     for i in range(503):
-    #         if i > 2:
-    #             sum_list = [sum_list[i] + sensor.sh3001_getimudata('gyro','xyz')[i] for i in range(3)]
-    #             # print(count)
-    #             # count +=1
-    #     print("sum_list:",sum_list)
-    #     self.gyro_offset = [round(sum_list[i],2) / 500.0 for i in range(3)]
-    #     print("gyro_val:",self.gyro_offset)
-
     def set_offset(self, offset_list=None):
         if offset_list == None:
             offset_list = self.acc_offset
-        # temp = str(list(offset_list))
         self.db.set('calibrate_offset_list', str(offset_list))
         self.db.set('calibrate_max_list', str(self.acc_max))
         self.db.set('calibrate_min_list', str(self.acc_min))
@@ -700,14 +644,8 @@ class Sh3001(I2C):
     def acc_calibrate_cmd(self):
         try:
             print('Calibration start!\nRotate the device for 720 degree in all 3 axis\nPress [Ctrl] + [C] if finish')
-            # input_val = readkey()
-            # print(input_val)
-            # if input_val == 's':
-            # print("start_calibrating")
             while True:
-                # print('cal')
                 self.calibrate('acc')
-                # break
         except KeyboardInterrupt:
             print("")
             self.set_offset(self.acc_offset)
@@ -717,17 +655,8 @@ class Sh3001(I2C):
 if __name__ == '__main__':
     import time
     from math import asin
-    # import sys
-    # import tty
-    # import termios
-    # import asyncio
-    
-    
 
     sensor = Sh3001()
-    # sensor.zero_point_init()
-    # print('init')
-    # print(sensor.sh3001_init())
     a = 0
     current_val = [0,0,0]
     delta = 1
@@ -736,25 +665,9 @@ if __name__ == '__main__':
     ODR_T = 0.1
     acc_list = []
     while True:
-        pass
-    #  gyro
-        # current_val = [i / 16.4 * ODR_T if abs(i / 16.4 * ODR_T) > 1 else 0 for i in sensor.sh3001_getimudata('gyro','xyz')]
-        # last_val = [last_val[i] + current_val[i] for i in range(3)]
 
         current_val = [i / 16.4 * 0.1 for i in sensor.sh3001_getimudata('acc','xyz')]
-        # last_val = [last_val[i] + current_val[i] for i in range(3)]
         
         print(current_val)
         time.sleep(ODR_T)
 
-
-    # # acc
-        
-        # acc_list = sensor.sh3001_getimudata('acc','xyz')
-        # print(acc_list)
-
-        # acc_list = [min(2046,i) for i in acc_list]
-        # acc_list = [max(-2046,i) for i in acc_list]
-        # # print(asin(acc_list[0] / 2100.0))
-        # print((asin(acc_list[0] / 2046.0)) / math.pi * 180)
-        # time.sleep(0.1)
