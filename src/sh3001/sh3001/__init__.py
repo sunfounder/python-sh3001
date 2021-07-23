@@ -42,10 +42,7 @@ class LxAutoStart(object):
             conf = open(self.file,'w')
             conf.write("")
             conf.close()
-			# return default_value
-		# except:
-		# 	return default_value
-
+            self.cmds = []
 
     def remove(self, expected):
         for cmd in self.cmds:
