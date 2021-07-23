@@ -689,7 +689,7 @@ class Sh3001(I2C):
     #     print("gyro_val:",self.gyro_offset)
 
     def set_offset(self, offset_list=None):
-        if offset_list = None:
+        if offset_list == None:
             offset_list = self.acc_offset
         # temp = str(list(offset_list))
         self.db.set('calibrate_offset_list', offset_list)
