@@ -420,7 +420,7 @@ class Sh3001(I2C):
         self.acc_min = self.get_from_config('calibrate_min_list', default=str(self.new_list(0)))
         
         self.gyro_offset = [0,0,0]
-        self.data_vector = [0,0,0
+        self.data_vector = [0,0,0]
 
     def get_from_config(self, name, default=""):
         value = self.db.get(name, default=str(self.new_list(0)))
