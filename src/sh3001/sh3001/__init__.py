@@ -2,7 +2,6 @@
 from sh3001.sh3001 import Sh3001
 from sh3001.i2c import I2C
 
-
 def run_command(cmd=""):
     import subprocess
     p = subprocess.Popen(
@@ -85,7 +84,6 @@ def rotate():
     from sh3001.filedb import fileDB
 
     lxAutoStart = LxAutoStart()
-    sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
     db = fileDB(db='/home/pi/.config/auto-rotator/config')
     if len(sys.argv) >= 2:
         if sys.argv[1] == "install":
@@ -111,6 +109,7 @@ def rotate():
             print("auto-rotator uninstalled successfully")
             quit()
         elif sys.argv[1] == "calibrate":
+            sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
             try:
                 print('Calibration start!')
                 print('Rotate the device for 720 degree in all 3 axi')
@@ -129,6 +128,7 @@ def rotate():
             usage()
 
     rotate_angle = db.get("rotate_angle", "90")
+    sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
 
     while True:
         try:
