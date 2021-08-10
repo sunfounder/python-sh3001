@@ -75,6 +75,27 @@ def usage():
     print("Usage auto-rotator [install/uninstall/calibrate]")
     quit()
 
+def calibrate(reset=False):
+
+    sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
+    if reset:
+        sensor.acc_max = [0, 0, 0]
+        sensor.acc_min = [0, 0, 0]
+        sensor.acc_offset = [0, 0, 0]
+
+    try:
+        print('Calibration start!')
+        print('Rotate the device for 720 degree in all 3 axis')
+        print('Crtl + C to quit if finished')
+        while True:
+            sensor.calibrate('acc')
+    except KeyboardInterrupt:
+        print("")
+        sensor.set_offset()
+        print("Calibrate successfully")
+        print('Offset: %s' % sensor.acc_offset)
+        quit()
+
 
 def rotate():
     import time
@@ -109,21 +130,11 @@ def rotate():
             print("auto-rotator uninstalled successfully")
             quit()
         elif sys.argv[1] == "calibrate":
-            sensor = Sh3001(db='/home/pi/.config/auto-rotator/config')
-            try:
-                print('Calibration start!')
-                print('Rotate the device for 720 degree in all 3 axi')
-                print('Press [Ctrl] + [C] if finish')
-                while True:
-                    # print('cal')
-                    sensor.calibrate('acc')
-                    # break
-            except KeyboardInterrupt:
-                print("")
-                sensor.set_offset()
-                print("Calibrate successfully")
-                print('Offset: %s' % sensor.acc_offset)
-                quit()
+            reset = False
+            if len(sys.argv) >= 3:
+                sys.argv[2] == "reset"
+                reset = True
+            calibrate(reset=reset)
         else:
             usage()
 

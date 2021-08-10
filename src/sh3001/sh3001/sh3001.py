@@ -7,29 +7,6 @@ import termios
 import asyncio
 from sh3001.filedb import fileDB
 
-
-def readchar():
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
-
-def readkey(getchar_fn=None):
-    getchar = getchar_fn or readchar
-    c1 = getchar()
-    if ord(c1) != 0x1b:
-        return c1
-    c2 = getchar()
-    if ord(c2) != 0x5b:
-        return c1
-    c3 = getchar()
-    return chr(0x10 + ord(c3) - 65)
-
-
 def bytes_toint(msb, lsb):
     '''
     Convert two bytes to signed integer (big endian)
@@ -428,8 +405,7 @@ class Sh3001(I2C):
         return list(value)
 
     def new_list(self, default):
-        _ = [0 for i in range(3)]
-        return _
+        return [0 for i in range(3)]
 
     def calibrate(self,aram, stopfunc=stop_func, waitfunc=default_wait):
         '''
