@@ -1,11 +1,11 @@
 import time
 import math
-from sh3001.i2c import I2C
+from .i2c import I2C
 import sys
 import tty
 import termios
 import asyncio
-from sh3001.filedb import fileDB
+from .filedb import fileDB
 
 def bytes_toint(msb, lsb):
     '''
@@ -426,7 +426,7 @@ class Sh3001(I2C):
             count = 0
             for i in range(503):
                 if i > 2:
-                    sum_list = [sum_list[i] + sensor.sh3001_getimudata('gyro','xyz')[i] for i in range(3)]
+                    sum_list = [sum_list[i] + self.sh3001_getimudata('gyro','xyz')[i] for i in range(3)]
             self.gyro_offset = [round(sum_list[i],2) / 500.0 for i in range(3)]
             print("gyro_offset:",self.gyro_offset)
         
@@ -542,11 +542,9 @@ class Sh3001(I2C):
         accData[2] = bytes_toint(regData[5],regData[4])
         # accData = [(accData[i] - self.acc_cal[i]) for i in range(len(accData))]
 
-
         gyroData[0] = bytes_toint(regData[7],regData[6])
         gyroData[1] = bytes_toint(regData[9],regData[8])
         gyroData[2] = bytes_toint(regData[11],regData[10])
-        #   
         # gyroData = [gyroData[i] - self.gyro_offset[i] for i in range(len(gyroData))]
 
         return accData,gyroData
@@ -626,24 +624,4 @@ class Sh3001(I2C):
             print("")
             self.set_offset(self.acc_offset)
             print('offset: ',self.acc_offset)
-
-
-if __name__ == '__main__':
-    import time
-    from math import asin
-
-    sensor = Sh3001()
-    a = 0
-    current_val = [0,0,0]
-    delta = 1
-    last_val = [0,0,0]
-    count = 0
-    ODR_T = 0.1
-    acc_list = []
-    while True:
-
-        current_val = [i / 16.4 * 0.1 for i in sensor.sh3001_getimudata('acc','xyz')]
-        
-        print(current_val)
-        time.sleep(ODR_T)
 
